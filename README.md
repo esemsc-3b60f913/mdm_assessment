@@ -65,3 +65,4 @@ print(sinh(np.array([0, 1])))  # Array of sinh values
 - **Code Quality**: Code follows PEP8 (Flake8 compliant), with clear docstrings.
 
 This solution fully meets the requirements of Part 1 [30 marks] of the assessment. For repository management, regular commits and proper branching (e.g., `feature/part1`) should be used, though this is not shown in the code itself.
+

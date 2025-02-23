@@ -1,0 +1,46 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [3.8, 3.10]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+        activate-environment: test-env
+        environment-file: environment.yml
+
+    - name: Install package and validate requirements.txt
+      run: |
+        conda run -n test-env pip install -e .
+        conda run -n test-env pip install -r requirements.txt
+
+    - name: Run tests
+      run: conda run -n test-env pytest tests/
+
+    - name: Check Flake8
+      run: |
+        conda run -n test-env pip install flake8
+        conda run -n test-env flake8 acsefunctions/ tests/
+
+
+    - name: Test notebook
+      run: |
+        conda run -n test-env pip install nbval
+        conda run -n test-env pytest --nbval docs/examples.ipynb

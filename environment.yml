@@ -3,6 +3,5 @@ name: acsefunctions_env
 channels:
   - defaults
 dependencies:
-  - python=3.8
   - numpy>=1.19
   - pytest>=6.0

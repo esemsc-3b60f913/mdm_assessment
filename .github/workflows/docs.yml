@@ -1,0 +1,46 @@
+# .github/workflows/docs.yml
+name: Build Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'examples.ipynb'
+      - 'acsefunctions/**.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install sphinx nbsphinx
+
+    - name: Install LaTeX
+      run: sudo apt-get install -y texlive-latex-recommended texlive-latex-extra
+
+    - name: Build documentation
+      run: |
+        cd docs
+        make html
+        make latexpdf
+
+    - name: Copy PDF
+      run: cp docs/build/latex/acsefunctions.pdf docs/acsefunctions.pdf
+
+    - name: Commit PDF
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Update documentation PDF
+        file_pattern: docs/acsefunctions.pdf
