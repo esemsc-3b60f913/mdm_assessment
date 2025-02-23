@@ -113,4 +113,4 @@ This ensures code quality and reliability for users and contributors.
 - **Output Types:** Scalars return as `float`, arrays as `ndarray`.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the IMPERIAL License.
