@@ -1,68 +1,116 @@
 # acsefunctions
+A numerical software package for computing transcendental and special functions using series expansions and integral definitions.
 
-A numerical software package for computing transcendental functions using Taylor series expansions.
+## Features
+- **Transcendental Functions:** Compute `exp(x)`, `sinh(x)`, `cosh(x)`, and `tanh(x)` using Taylor series expansions with customizable precision.
+- **Special Functions:** Calculate `factorial(n)`, `gamma(z)`, and `bessel_j(alpha, x)` with efficient and accurate implementations.
+- **Vectorized Operations:** Functions seamlessly handle both scalar inputs and NumPy arrays for efficient computation.
+- **Precision Control:** Optional `tol` parameter allows users to specify convergence tolerance for series-based functions.
+- **Comprehensive Testing:** Includes unit tests, docstring examples, and CI workflows to ensure reliability.
+- **Documentation:** Features Sphinx-generated API docs and Jupyter notebooks with usage examples and performance insights.
 
 ## Installation
+Follow these steps to set up and install the `acsefunctions` package:
 
-1. Clone the repository:
+### Clone the Repository:
+```bash
 git clone <repository_url>
 cd acsefunctions
+```
 
-
-2. Create and activate the Conda environment:
+### Create and Activate the Conda Environment:
+```bash
 conda env create -f environment.yml
 conda activate acsefunctions_env
+```
 
-
-3. Install the package:
+### Install the Package:
+```bash
 pip install -e .
-
+```
+This installs the package in editable mode, along with all dependencies listed in `environment.yml` and `requirements.txt`, such as NumPy.
 
 ## Running Tests
-
-Run the test suite with:
+To verify the package’s functionality, run the full test suite (unit tests and docstring tests):
+```bash
 pytest tests/
-
+```
+Tests check accuracy against NumPy/SciPy, handle edge cases (e.g., `exp(0) = 1`), and ensure proper scalar/array output types.
 
 ## Usage
-
+### Importing Functions
 ```python
-from acsefunctions import exp, sinh, cosh, tanh
+from acsefunctions import exp, sinh, cosh, tanh, factorial, gamma, bessel_j
 import numpy as np
-
-print(exp(1))              # Approx. 2.71828
-print(sinh(np.array([0, 1])))  # Array of sinh values
 ```
----
 
-## Explanation
+### Examples
+#### Transcendental Functions
+```python
+print(exp(1))                  # Approx. 2.71828
+print(sinh(np.array([0, 1])))  # Array([0.0, 1.1752...])
+print(cosh(0))                 # 1.0
+print(tanh(np.array([-1, 1]))) # Array([-0.7615..., 0.7615...])
+```
 
-### Function Implementations
-- **Taylor Series**: Each function (`exp`, `sinh`, `cosh`) computes its series iteratively, adding terms until `|term| < tol`. For `tanh`, we use `sinh(x) / cosh(x)` since it leverages the already implemented series and is mathematically valid.
-- **Vectorization**: NumPy handles array inputs efficiently, computing terms for all elements simultaneously. The loop stops when the maximum term across all elements is below `tol`.
-- **Scalar Handling**: Inputs are converted to arrays with `np.asarray`, and scalars are returned as floats by checking `ndim`.
+#### Special Functions
+```python
+print(factorial(5))         # 120
+print(gamma(0.5))           # Approx. 1.77245 (sqrt(pi))
+print(bessel_j(0, 0))       # 1.0
+```
+
+#### Vectorized Inputs
+```python
+x = np.linspace(-1, 1, 5)
+print(exp(x))               # Array of exp values
+print(gamma(x + 1))         # Array of gamma values for x > 0
+```
+Functions accept a `tol` parameter (default `1e-10`) to control series convergence precision.
+
+## Documentation
+### API Documentation
+Built with Sphinx. To generate locally:
+```bash
+cd docs
+make html
+```
+Open `docs/build/html/index.html` in a browser for detailed function descriptions, parameters, and examples.
+
+### Usage Examples
+Check `docs/source/examples.ipynb` for interactive demonstrations, including plots of function outputs.
+
+### Performance Analysis
+See `performance.ipynb` for execution time comparisons and error analysis against NumPy/SciPy implementations.
+
+## Continuous Integration (CI)
+The repository leverages GitHub Actions for CI, providing:
+- **Testing and Linting:** Executes `pytest` and `flake8` across Ubuntu and Windows with Python 3.8 and 3.10.
+- **Environment Consistency:** Validates `environment.yml` and `requirements.txt`.
+- **Documentation Automation:** Builds Sphinx docs and commits a PDF version on updates to documentation files.
+- **Notebook Validation:** Ensures `examples.ipynb` runs correctly using `nbval`.
+
+This ensures code quality and reliability for users and contributors.
+
+## Development
+- **Code Quality:** Adheres to PEP8 standards, enforced via Flake8 linting.
+- **Dependencies:** Managed through `environment.yml` (Conda) and `requirements.txt` (Pip).
+- **Version Control:** Use feature branches (e.g., `feature/part1`, `feature/part2`) and commit changes regularly for collaborative development.
+
+## Function Details
+### Implementations
+- **Taylor Series:** `exp`, `sinh`, and `cosh` compute terms iteratively until `|term| < tol`. `tanh` is derived as `sinh(x) / cosh(x)` for efficiency.
+- **Special Functions:** `factorial` uses iterative multiplication, `gamma` leverages integral or recursive definitions, and `bessel_j` implements the Bessel function series.
+- **Vectorization:** NumPy’s array operations enable simultaneous computation across elements, with convergence based on the maximum term magnitude.
 
 ### API Design
-- **Parameters**: Each function takes `x` (input) and an optional `tol` (default 1e-10).
-- **Docstrings**: Include description, parameters, returns, and examples (e.g., scalar and array inputs).
+- **Parameters:** Functions take an input (`x`, `n`, etc.) and an optional `tol` for precision.
+- **Docstrings:** Provide descriptions, parameter details, return types, and usage examples (scalar and array).
 
-### Testing
-- **Accuracy**: Compared against NumPy's implementations over `x = [-10, 10]` with `assert_allclose`.
-- **Edge Cases**: Verified `exp(0) = 1`, `sinh(0) = 0`, `cosh(0) = 1`, `tanh(0) = 0`.
-- **Input Types**: Checked scalar returns as floats and array returns as `ndarray`.
+### Verification
+- **Accuracy:** Tested against NumPy/SciPy over ranges like `[-10, 10]` using `assert_allclose`.
+- **Edge Cases:** Confirmed for key inputs (e.g., `sinh(0) = 0`, `bessel_j(0, 0) = 1`).
+- **Output Types:** Scalars return as `float`, arrays as `ndarray`.
 
-### Package Setup
-- **Installation**: `setup.py` ensures `pip install -e .` works, installing NumPy as a dependency.
-- **Testing**: `pytest tests/` runs all tests successfully.
-- **Dependencies**: Specified in `requirements.txt` and `environment.yml`.
-
----
-
-## Verification
-- **Installable**: After running `pip install -e .`, the package is importable.
-- **Testable**: `pytest tests/` passes all assertions.
-- **Vector Support**: Functions work with NumPy arrays and scalars.
-- **Code Quality**: Code follows PEP8 (Flake8 compliant), with clear docstrings.
-
-This solution fully meets the requirements of Part 1 [30 marks] of the assessment. For repository management, regular commits and proper branching (e.g., `feature/part1`) should be used, though this is not shown in the code itself.
-
+## License
+This project is licensed under the MIT License.
